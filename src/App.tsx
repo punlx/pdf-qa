@@ -10,7 +10,11 @@ export default function App() {
 
   return (
     <AppShell>
-      <UploadPanel />
+      {/* desktop sidebar */}
+      <div className="hidden lg:block">
+        <UploadPanel />
+      </div>
+
       <ChatPanel />
     </AppShell>
   );
