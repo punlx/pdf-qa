@@ -16,7 +16,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
   const { chatId, reset: resetChat, setMemory } = useChatStore();
 
   // file-store selectors
-  const resetFiles = useFilesStore((s) => s.reset);
+  const resetFiles = useFilesStore((s) => s.clear);
   const setFiles = useFilesStore((s) => s.setFiles);
 
   // config-store selectors (ใช้สองบรรทัดแยกแบบที่คุณทำได้)
