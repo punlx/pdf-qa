@@ -1,3 +1,5 @@
+// src/stores/filesStore.ts
+
 import { create } from 'zustand';
 
 export interface UploadFileMeta {
@@ -19,4 +21,6 @@ export const useFilesStore = create<FilesState>((set) => ({
   setFiles: (fs) => set({ files: fs }),
   addMany: (fs) => set((s) => ({ files: [...s.files, ...fs] })),
   reset: () => set({ files: [] }),
+  deleteById: (id: string) => set((s) => ({ files: s.files.filter((f) => f.id !== id) })),
+  clear: () => set({ files: [] }),
 }));

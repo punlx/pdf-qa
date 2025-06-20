@@ -1,3 +1,5 @@
+// src/components/upload/FileList.tsx
+
 import { useFilesStore } from '@/stores/filesStore';
 import { FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';

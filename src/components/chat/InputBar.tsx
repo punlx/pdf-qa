@@ -7,21 +7,31 @@ import { toast } from 'sonner';
 import { v4 as uuid } from 'uuid';
 import { useChatStore } from '@/stores/chatStore';
 import { useConfigStore } from '@/stores/configStore';
+import { useFilesStore } from '@/stores/filesStore'; // 🆕
 import { sendChat } from '@/api/chat';
 import { sendChatWS, genTempId } from '@/api/wsChat';
 
 export const InputBar = () => {
   const [text, setText] = useState('');
 
-  // stores
+  /* ---------------- stores ---------------- */
   const { chatId, setChatId, addMessage, updateMessage, sending, setSending, setMemory } =
     useChatStore();
   const useStream = useConfigStore((s) => s.useStream);
+  const filesCount = useFilesStore((s) => s.files.length); // 🆕
+  const hasFiles = filesCount > 0; // 🆕
 
+  /* ---------------- handler ---------------- */
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const q = text.trim();
     if (!q || sending) return;
+
+    if (!hasFiles) {
+      // 🆕 guard
+      toast.warning('กรุณาอัปโหลด PDF ก่อนถามคำถาม');
+      return;
+    }
 
     /* ---------- optimistic user message ---------- */
     const userId = uuid();
@@ -41,7 +51,7 @@ export const InputBar = () => {
           onTyping: () => updateMessage(botId, { text: '...' }),
           onChunk: (chunk) =>
             updateMessage(botId, (prev) => ({
-              text: prev.text + chunk, // prev มี type Message แล้ว
+              text: prev.text + chunk,
             })),
           onComplete: (p) => {
             updateMessage(botId, {
@@ -49,8 +59,7 @@ export const InputBar = () => {
               text: p.answer ?? '',
               source: p.source,
             });
-
-            if (!chatId && p.chat_id) setChatId(p.chat_id); // ✅ ไม่ส่ง null
+            if (!chatId && p.chat_id) setChatId(p.chat_id);
             setMemory(true);
             setSending(false);
           },
@@ -76,7 +85,7 @@ export const InputBar = () => {
           source: res.source,
         });
 
-        if (!chatId && res.chat_id) setChatId(res.chat_id); // ✅ ไม่ส่ง null
+        if (!chatId && res.chat_id) setChatId(res.chat_id);
         setMemory(true);
       } catch (err: any) {
         toast.error(err.message ?? 'Chat failed');
@@ -94,7 +103,7 @@ export const InputBar = () => {
         placeholder="ถามอะไรเกี่ยวกับ PDF…"
         disabled={sending}
       />
-      <Button type="submit" disabled={sending || !text.trim()}>
+      <Button type="submit" disabled={sending || !text.trim() || !hasFiles}>
         {sending ? (
           <Loader2 className="animate-spin h-4 w-4" />
         ) : (

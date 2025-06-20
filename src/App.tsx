@@ -1,10 +1,10 @@
 import { UploadPanel } from '@/components/upload/UploadPanel';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { AppShell } from '@/components/layout/AppShell';
-import { useStatus } from '@/hooks/useStatus';
+import { useFilesSync } from '@/hooks/useFilesSync';
 
 export default function App() {
-  useStatus();
+  useFilesSync();
 
   return (
     <AppShell>

@@ -1,11 +1,12 @@
+// src/components/ThemeToggle.tsx
 import { useTheme } from 'next-themes';
 import {
   DropdownMenu,
-  DropdownMenuItem,
-  DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { Sun, Moon, Computer } from 'lucide-react';
+import { Sun, Moon, Laptop } from 'lucide-react';
 
 export const ThemeToggle = () => {
   const { setTheme } = useTheme();
@@ -13,12 +14,12 @@ export const ThemeToggle = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="icon-btn">
-          <Sun className="hidden dark:inline-block h-5 w-5" />
-          <Moon className="inline-block dark:hidden h-5 w-5" />
+        <button className="rounded-full p-2 hover:bg-muted transition" aria-label="Toggle theme">
+          <Sun className="h-5 w-5 block dark:hidden" />
+          <Moon className="h-5 w-5 hidden dark:block" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="end">
+      <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
           <Sun className="mr-2 h-4 w-4" /> Light
         </DropdownMenuItem>
@@ -26,7 +27,7 @@ export const ThemeToggle = () => {
           <Moon className="mr-2 h-4 w-4" /> Dark
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
-          <Computer className="mr-2 h-4 w-4" /> System
+          <Laptop className="mr-2 h-4 w-4" /> System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

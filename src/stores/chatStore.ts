@@ -1,3 +1,5 @@
+// src/stores/chatStore.ts
+
 import { create } from 'zustand';
 
 export interface Message {

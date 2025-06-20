@@ -1,3 +1,4 @@
+// src/components/upload/UploadPanel.tsx
 import { DropZone } from './DropZone';
 import { FileList } from './FileList';
 
