@@ -24,7 +24,7 @@ export const UploadPanel = () => {
   }
 
   return (
-    <div className="w-full md:w-1/3 border-r p-4">
+    <div className="w-lg relative left-0 max-lg:absolute max-lg:left-[-512px] transition-all border-r p-4">
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-medium">อัปโหลด PDF</h2>
 

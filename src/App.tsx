@@ -1,3 +1,5 @@
+// src/App.tsx
+
 import { UploadPanel } from '@/components/upload/UploadPanel';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { AppShell } from '@/components/layout/AppShell';

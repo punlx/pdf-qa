@@ -27,6 +27,12 @@ export const FileList = () => {
       <ul className="space-y-2">
         {files.map((f) => (
           <li key={f.id} className="flex items-center gap-2 text-sm border rounded-md px-3 py-2">
+            <FileText className="h-4 w-4 text-primary shrink-0" />
+            <span className="flex-1 truncate">{f.filename}</span>
+            <span className="text-xs text-muted-foreground mr-2 shrink-0">
+              {(f.size / 1024).toFixed(1)} KB
+            </span>
+
             {/* ปุ่มลบรายไฟล์ */}
             <button
               onClick={() => handleRemove(f.id)}
@@ -35,11 +41,6 @@ export const FileList = () => {
             >
               <Trash className="h-4 w-4" />
             </button>
-            <FileText className="h-4 w-4 text-primary shrink-0" />
-            <span className="flex-1 truncate">{f.filename}</span>
-            <span className="text-xs text-muted-foreground mr-2 shrink-0">
-              {(f.size / 1024).toFixed(1)} KB
-            </span>
           </li>
         ))}
       </ul>
