@@ -1,4 +1,4 @@
-import { useCounterStore } from '@/store/useCounterStore';
+import { useCounterStore } from '@/store/counterStore';
 
 function App() {
   const { count, increment, decrement } = useCounterStore();
