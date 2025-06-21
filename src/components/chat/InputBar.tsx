@@ -88,7 +88,19 @@ export const InputBar = () => {
         if (!chatId && res.chat_id) setChatId(res.chat_id);
         setMemory(true);
       } catch (err: any) {
-        toast.error(err.message ?? 'Chat failed');
+        const msg =
+          err?.message === 'Network Error'
+            ? 'Network error: กรุณาตรวจสอบการเชื่อมต่อ'
+            : err?.message ?? 'Chat failed';
+
+        toast.error(msg);
+
+        /* 🆕  ส่งข้อความ error กลับเข้าแชต */
+        addMessage({
+          id: uuid(),
+          role: 'bot',
+          text: `❌ ${msg}`,
+        });
       } finally {
         setSending(false);
       }

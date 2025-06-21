@@ -1,18 +1,18 @@
 // src/api/chat.ts
-// src/api/chat.ts
-import { z } from 'zod';
-import { client } from './client';
+import { z } from "zod";
+import axios, { AxiosError } from "axios";
+import { client } from "./client";
 
-// ---------- Zod Schemas ----------
+/* ──────────────────── Zod Schemas ──────────────────── */
 
-// body ที่จะส่งเข้า /api/chat
+/** body ที่จะส่งเข้า /api/chat */
 export const chatReqSchema = z.object({
-  question: z.string().min(1, 'Question is required'),
+  question: z.string().min(1, "Question is required"),
   chat_id: z.string().uuid().optional(),
 });
 export type ChatRequest = z.infer<typeof chatReqSchema>;
 
-// response ที่ backend จะคืนมา
+/** response ที่ backend จะคืนมา */
 export const chatResSchema = z.object({
   answer: z.string(),
   source: z.string(),
@@ -22,19 +22,48 @@ export const chatResSchema = z.object({
 });
 export type ChatResponse = z.infer<typeof chatResSchema>;
 
-// ---------- API Call Helper ----------
+/* ──────────────────── Helper ──────────────────── */
+
+/**
+ * POST /api/chat
+ *
+ * @param body          – payload (question, chat_id?)
+ * @param opts.validateInput   – เปิด/ปิด validation request (default true)
+ * @param opts.validateOutput  – เปิด/ปิด validation response (default true)
+ *
+ * @throws ZodError  – เมื่อ schema ไม่ผ่าน
+ * @throws Error     – เมื่อ network หรือ server error
+ */
 export async function sendChat(
   body: ChatRequest,
   opts: { validateInput?: boolean; validateOutput?: boolean } = {}
 ): Promise<ChatResponse> {
   const { validateInput = true, validateOutput = true } = opts;
 
-  // 1) validate request
+  /* 1) ตรวจ request */
   if (validateInput) chatReqSchema.parse(body);
 
-  // 2) call API
-  const res = await client.post('/api/chat', body);
+  try {
+    /* 2) ยิง API */
+    const res = await client.post("/api/chat", body);
 
-  // 3) validate response
-  return validateOutput ? chatResSchema.parse(res.data) : (res.data as ChatResponse);
+    /* 3) ตรวจ response */
+    return validateOutput
+      ? chatResSchema.parse(res.data)
+      : (res.data as ChatResponse);
+  } catch (err) {
+    /* ── รวม error ให้สวยงาม ── */
+    if (err instanceof z.ZodError) {
+      /* schema ผิดพลาด (request / response) */
+      throw err;
+    }
+
+    if (axios.isAxiosError(err)) {
+      const ax = err as AxiosError<{ detail?: string }>;
+      const detail = ax.response?.data?.detail;
+      throw new Error(detail ?? ax.message);
+    }
+
+    throw err as Error;
+  }
 }

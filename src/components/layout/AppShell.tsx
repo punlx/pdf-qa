@@ -14,7 +14,7 @@ import { useFilesStore } from '@/stores/filesStore';
 import { useConfigStore } from '@/stores/configStore';
 import { resetSession } from '@/api/reset';
 import { client } from '@/api/client';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   /* ──────────── Zustand selectors ──────────── */
@@ -65,55 +65,62 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
 
   /* ──────────── Render ──────────── */
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 h-14 border-b">
-        {/* Title + Hamburger */}
-        <div className="flex items-center gap-2">
-          <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                aria-label="open upload sidebar"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
+    <>
+      <Toaster
+        richColors // ใช้สี pre-set สวยขึ้น
+        position="top-center"
+        duration={3000} // toast auto-close 3s
+      />
+      <div className="min-h-screen flex flex-col">
+        {/* Header */}
+        <header className="flex items-center justify-between px-4 h-14 border-b">
+          {/* Title + Hamburger */}
+          <div className="flex items-center gap-2">
+            <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden"
+                  aria-label="open upload sidebar"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
 
-            <SheetContent side="left" className="p-0 w-80">
-              <UploadPanel compact />
-            </SheetContent>
-          </Sheet>
+              <SheetContent side="left" className="p-0 w-80">
+                <UploadPanel compact />
+              </SheetContent>
+            </Sheet>
 
-          <h1 className="font-semibold whitespace-nowrap">ArcFusion PDF QA</h1>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center gap-4">
-          {/* Streaming toggle */}
-          <div className="flex items-center gap-1 text-xs">
-            <span>REST</span>
-            <Switch
-              checked={useStream}
-              onCheckedChange={setUseStream}
-              aria-label="toggle streaming"
-            />
-            <span>WS</span>
+            <h1 className="font-semibold whitespace-nowrap">ArcFusion PDF QA</h1>
           </div>
 
-          <MemoryBadge />
-          <ThemeToggle />
+          {/* Controls */}
+          <div className="flex items-center gap-4">
+            {/* Streaming toggle */}
+            <div className="flex items-center gap-1 text-xs">
+              <span>REST</span>
+              <Switch
+                checked={useStream}
+                onCheckedChange={setUseStream}
+                aria-label="toggle streaming"
+              />
+              <span>WS</span>
+            </div>
 
-          <Button variant="outline" onClick={handleReset}>
-            Reset
-          </Button>
-        </div>
-      </header>
+            <MemoryBadge />
+            <ThemeToggle />
 
-      {/* Body */}
-      <main className="flex-1 flex">{children}</main>
-    </div>
+            <Button variant="outline" onClick={handleReset}>
+              Reset
+            </Button>
+          </div>
+        </header>
+
+        {/* Body */}
+        <main className="flex-1 flex">{children}</main>
+      </div>
+    </>
   );
 };
