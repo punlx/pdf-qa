@@ -5,10 +5,5 @@ services:
     branch: main
     autoDeploy: true
 
-    rootDir: frontend2
-    dockerContext: frontend2
-    dockerfilePath: frontend2/Dockerfile.prod
-
+    dockerfilePath: ./Dockerfile.prod
     healthCheckPath: /
-    ports:
-      - 80
