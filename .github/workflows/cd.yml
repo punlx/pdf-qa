@@ -1,0 +1,66 @@
+name: Frontend CD # Build → Push image (GHCR) → Deploy ด้วย docker run
+
+on:
+  push:
+    branches: [main] # deploy เมื่อ push เข้า main
+    paths: ['**'] # ไฟล์ใดก็ได้ เพราะ repo นี้มีแต่ FE
+  workflow_dispatch: # สั่งรันมือได้
+
+# ───────────────────────────────────────────────────────────────
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}-frontend:latest
+# ตัวอย่าง: ghcr.io/username/frontend2-frontend:latest
+# ───────────────────────────────────────────────────────────────
+
+jobs:
+  # ================= Build & Push image =================
+  build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.prod # ใช้ frontend2/Dockerfile.prod
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}
+            ${{ env.IMAGE_NAME }}-${{ github.sha }}
+
+  # ================= Deploy (optional) =================
+  deploy:
+    needs: build-push
+    if: ${{ secrets.DEPLOY_HOST != '' }} # มี Secrets ครบจึงรัน
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            echo "🔄 Pull latest image"
+            docker pull ${{ env.IMAGE_NAME }}
+
+            echo "🛑 Stop/Remove old container"
+            docker stop frontend || true
+            docker rm   frontend || true
+
+            echo "🚀 Run new container"
+            docker run -d --name frontend -p 80:80 \
+              ${{ env.IMAGE_NAME }}
+
+            echo "🧹 Prune dangling images"
+            docker image prune -f

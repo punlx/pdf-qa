@@ -11,4 +11,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: true, // ฟังข้างนอก container
+    port: 5173, // ค่า default หรือปรับตามต้องการ
+    strictPort: true,
+  },
 });
