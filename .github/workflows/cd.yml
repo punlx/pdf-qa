@@ -1,10 +1,10 @@
-name: Frontend CI # (no deploy; Render auto-deploys)
+name: Frontend CI # Build & Unit-test (Render auto-deploys via webhook)
 
 on:
   push:
-    branches: [main] # ตรวจ build ทุก push ที่ main
-    paths: ['**'] # repo นี้มีแต่ frontend
-  pull_request: # ตรวจ PR ด้วย
+    branches: [main] # รันบน main
+    paths: ['**'] # repo นี้มีแต่ FE
+  pull_request: # รันบน PR
     paths: ['**']
   workflow_dispatch:
 
@@ -13,8 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ───────────── Clone repo ─────────────
       - uses: actions/checkout@v4
 
+      # ───────────── Setup Node & cache ─────────────
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -22,15 +24,19 @@ jobs:
           cache: yarn
           cache-dependency-path: yarn.lock
 
+      # ───────────── Install deps ─────────────
       - run: yarn install --frozen-lockfile
 
-      # ⬇️ สองขั้นตอนต่อไปช่วยให้แน่ใจว่า prod-Dockerfile ยัง build ได้
+      # ───────────── Unit / Component tests ─────────────
+      - run: yarn test
+
+      # ───────────── Build production bundle ─────────────
       - run: yarn build # vite + tsc
+
+      # ───────────── Ensure Dockerfile.prod builds ─────────────
       - name: Docker build (no push)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile.prod
-          push: false # ✔ ไม่ push
-
-# ไม่มี job `deploy` — Render autoDeploy: true ทำหน้าที่นั้น
+          push: false # ไม่ส่ง image แค่ลอง build ให้ผ่าน
