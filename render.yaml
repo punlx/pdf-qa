@@ -1,14 +1,13 @@
 services:
   - type: web
-    name: arcfusion-frontend # เปลี่ยนได้
+    name: pdf-qa-frontend
     env: docker
-    plan: free # ฟรี 512 MB, 0.1 CPU
     branch: main
     autoDeploy: true
 
-    # จุดสำคัญสองบรรทัดนี้👇
-    dockerContext: ./frontend2 # path ที่มี package.json
-    dockerfilePath: ./frontend2/Dockerfile.prod
+    rootDir: . # ต้นทาง build = โฟลเดอร์ repo นี้
+    dockerContext: . # ← จุดเดียวกัน
+    dockerfilePath: ./Dockerfile.prod # ⬅️ ชี้ไฟล์ prod
 
-    # (optional) health check
+    # (optional) health check path
     healthCheckPath: /
