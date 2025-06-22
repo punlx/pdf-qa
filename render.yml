@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: pdf-qa-frontend
-    env: docker
-    branch: main
-    autoDeploy: true
-
-    dockerfilePath: ./Dockerfile.prod
-    healthCheckPath: /
