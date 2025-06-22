@@ -10,6 +10,7 @@ export default function App() {
 
   return (
     <AppShell>
+      <div>test</div>
       {/* desktop sidebar */}
       <div className="hidden lg:block">
         <UploadPanel />
