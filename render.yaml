@@ -4,10 +4,6 @@ services:
     env: docker
     branch: main
     autoDeploy: true
-
-    rootDir: . # ต้นทาง build = โฟลเดอร์ repo นี้
-    dockerContext: . # ← จุดเดียวกัน
-    dockerfilePath: ./Dockerfile.prod # ⬅️ ชี้ไฟล์ prod
-
-    # (optional) health check path
+    dockerContext: ./frontend2
+    dockerfilePath: ./frontend2/Dockerfile.prod
     healthCheckPath: /
